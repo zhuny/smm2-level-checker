@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Test(db.Model):
+class TestModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
