@@ -7,6 +7,10 @@ authors = ["zhuny <zhuny936772@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 Flask = "^2.0.2"
+SQLAlchemy = "^1.4.27"
+Flask-SQLAlchemy = "^2.5.1"
+graphene-sqlalchemy = "^2.3.0"
+Flask-GraphQL = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 
