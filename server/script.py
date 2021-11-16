@@ -1,10 +1,11 @@
+import collections
 import json
 
 import click
 from flask import Flask
 from flask.cli import AppGroup
 
-from server.model import db, Team
+from server.model import db, Team, Maker
 
 app_group = AppGroup('init')
 
@@ -34,6 +35,17 @@ def load_data(data_file):
         team_row.secondary_color = team_setting['SecondaryColor']
         team_row.max_difficulty = team_setting['maxDifficulty']
         db.session.add(team_row)
+
+        # setting maker first
+        maker_map = collections.defaultdict(Maker, {
+            maker.code: maker
+            for maker in db.session.query(Maker)
+        })
+        for level in data['levels']:
+            maker_row = maker_map[level['maker_id']]
+            maker_row.code = level['maker_id']
+            maker_row.name = level['creator']
+            db.session.add(maker_row)
 
     db.session.commit()
 
