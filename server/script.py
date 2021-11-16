@@ -5,7 +5,7 @@ import click
 from flask import Flask
 from flask.cli import AppGroup
 
-from server.model import db, Team, Maker
+from server.model import db, Team, Maker, Level
 
 app_group = AppGroup('init')
 
@@ -46,6 +46,18 @@ def load_data(data_file):
             maker_row.code = level['maker_id']
             maker_row.name = level['creator']
             db.session.add(maker_row)
+
+        # setting level
+        level_map = collections.defaultdict(Level, {
+            level.code: level
+            for level in db.session.query(Level)
+        })
+        for level in data['levels']:
+            level_row = level_map[level['code']]
+            level_row.code = level['code']
+            level_row.name = level['level_name']
+            level_row.creator = maker_map[level['maker_id']]
+            db.session.add(level_row)
 
     db.session.commit()
 
