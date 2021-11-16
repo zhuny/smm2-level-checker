@@ -1,11 +1,12 @@
 import collections
+import datetime
 import json
 
 import click
 from flask import Flask
 from flask.cli import AppGroup
 
-from server.model import db, Team, Maker, Level
+from server.model import db, Team, Maker, Level, LevelDifficulty
 
 app_group = AppGroup('init')
 
@@ -13,6 +14,10 @@ app_group = AppGroup('init')
 @app_group.command('table')
 def init_create():
     db.create_all()
+
+
+def from_string(string):
+    return datetime.datetime.fromisoformat(string.strip('Z'))
 
 
 @app_group.command('load')
@@ -58,6 +63,25 @@ def load_data(data_file):
             level_row.name = level['level_name']
             level_row.creator = maker_map[level['maker_id']]
             db.session.add(level_row)
+
+        # saving difficulty
+        difficulty_map = collections.defaultdict(LevelDifficulty, {
+            difficulty.level.code: difficulty
+            for difficulty in db.session.query(LevelDifficulty)
+        })
+        for level in data['levels']:
+            difficulty_row = difficulty_map[level['code']]
+            difficulty_row.team = team_row
+            difficulty_row.level = level_map[level['code']]
+            difficulty_row.difficulty = level['difficulty']
+            difficulty_row.clears = level['clears']
+            difficulty_row.likes = level['likes']
+            difficulty_row.tags = level['tags']
+            difficulty_row.submission_date = from_string(
+                level['original_submission_date']
+            )
+            difficulty_row.created_at = from_string(level['created_at'])
+            db.session.add(difficulty_row)
 
     db.session.commit()
 

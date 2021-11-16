@@ -42,8 +42,8 @@ class LevelDifficulty(db.Model):
     likes = db.Column(db.Integer)
     tags = db.Column(db.Text)
 
-    submission_date = db.Column(db.Date)
-    created_at = db.Column(db.Date)
+    submission_date = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime)
 
 
 def init(app: Flask):
