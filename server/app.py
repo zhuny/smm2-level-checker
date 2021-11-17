@@ -1,6 +1,7 @@
 import json
 
 from flask import Flask
+from flask_cors import CORS
 
 from server.model import init as init_model
 from server.script import init as init_script
@@ -23,5 +24,8 @@ def create_app():
 
     # register script
     init_script(app)
+
+    # CORS
+    CORS(app, resources={"*": {"origins": "*"}})
 
     return app
