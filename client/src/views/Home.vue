@@ -1,35 +1,15 @@
 <template lang="pug">
-div {{ hello }}
+div
+  button.bg-purple-300.px-4.py-2.text-white.rounded-3xl(@click="getRandomLevel") 랜덤 맵 가져오기
 </template>
 
 <script>
-import gql from "graphql-tag";
-import request from "graphql-request";
-
 export default {
   name: "Home",
-  data() {
-    return {
-      hello: "",
-    };
-  },
-  created() {
-    request(
-      "http://localhost:5000/api/graphql",
-      gql`
-        {
-          allTeam {
-            edges {
-              node {
-                teamName
-              }
-            }
-          }
-        }
-      `
-    ).then((data) => {
-      console.log(data);
-    });
+  methods: {
+    getRandomLevel() {
+      console.log("HI");
+    },
   },
 };
 </script>
