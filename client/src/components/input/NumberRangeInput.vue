@@ -2,9 +2,13 @@
 div.w-full.relative.input-box
   .horizontal-line
   div.left-value
+    .range-left-arrow &#x25C0;
     .value 3
+    .range-right-arrow &#x25B6;
   div.right-value
+    .range-left-arrow &#x25C0;
     .value 5
+    .range-right-arrow &#x25B6;
 </template>
 
 <script>
@@ -41,15 +45,31 @@ export default {
 
   .left-value,
   .right-value {
-    .value {
+    .value,
+    .range-left-arrow,
+    .range-right-arrow {
+      position: absolute;
+      top: -12px;
       width: 24px;
       height: 24px;
+      text-align: center;
+    }
+
+    .value {
+      left: -12px;
       text-align: center;
       border: 2px solid yellow;
       box-sizing: border-box;
       border-radius: 4px;
-      transform: translate(-50%, -50%);
       background-color: lightyellow;
+    }
+
+    .range-left-arrow {
+      left: -33px;
+    }
+
+    .range-right-arrow {
+      left: 9px;
     }
   }
 }
