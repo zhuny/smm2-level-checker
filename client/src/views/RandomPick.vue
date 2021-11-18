@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   h3 Choose Condition
-  TeamDifficultySelector(
+  TeamDifficultySelector.mt-2(
     v-for="team in teamList"
     :key="team.node.teamName"
     :teamName="team.node.teamName"
@@ -12,6 +12,7 @@ div
     v-model:rangeStart="team.rangeStart"
     v-model:rangeEnd="team.rangeEnd"
     )
+  button.rounded-lg.w-full.mt-2.p-2.bg-purple-300(@click="chooseOne") Pick One!
 </template>
 
 <script>
@@ -56,6 +57,11 @@ export default {
         });
       });
   },
+  methods: {
+    chooseOne() {
+      console.log(this.teamList);
+    }
+  }
 };
 </script>
 
