@@ -1,6 +1,7 @@
 <template lang="pug">
-div.mt-2.p-2.rounded-lg(:style="{backgroundColor: primaryColor}")
-  div.p-2
+div.mt-2.p-3.rounded-lg(:style="{backgroundColor: primaryColor}")
+  h2.p-1 {{ teamName }}
+  div.p-1
     input.mr-2(type="checkbox" v-model="thisSelected" :id="identity")
     label(:for="identity") contain this team {{ selected }}
 </template>

@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  h3 Choose Condition
+  h1 Choose Condition
   TeamDifficultySelector.mt-2(
     v-for="team in teamList"
     :key="team.node.teamName"
