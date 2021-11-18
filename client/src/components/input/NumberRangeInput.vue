@@ -2,18 +2,63 @@
 div.w-full.relative.input-box
   .horizontal-line
   div.left-value
-    .range-left-arrow &#x25C0;
-    .value 3
-    .range-right-arrow &#x25B6;
+    .range-left-arrow(@click="moveStartLeft") &#x25C0;
+    .value {{ thisRangeStart }}
+    .range-right-arrow(@click="moveStartRight") &#x25B6;
   div.right-value
-    .range-left-arrow &#x25C0;
-    .value 5
-    .range-right-arrow &#x25B6;
+    .range-left-arrow(@click="moveEndLeft") &#x25C0;
+    .value {{ thisRangeEnd }}
+    .range-right-arrow(@click="moveEndRight") &#x25B6;
 </template>
 
 <script>
 export default {
   name: "NumberRangeInput",
+  props: {
+    minValue: {
+      type: Number,
+      default: 0,
+    },
+    maxValue: {
+      type: Number,
+      required: true,
+    },
+    rangeStart: Number,
+    rangeEnd: Number,
+  },
+  trims: ["update:rangeStart", "update:rangeEnd"],
+  computed: {
+    thisRangeStart: {
+      get() {
+        return this.rangeStart ?? this.minValue;
+      },
+      set(value) {
+        this.$emit("update:rangeStart", value);
+      },
+    },
+    thisRangeEnd: {
+      get() {
+        return this.rangeEnd ?? this.maxValue;
+      },
+      set(value) {
+        this.$emit("update:rangeEnd", value);
+      },
+    },
+  },
+  methods: {
+    moveStartLeft() {
+      this.thisRangeStart--;
+    },
+    moveStartRight() {
+      this.thisRangeStart++;
+    },
+    moveEndLeft() {
+      this.thisRangeEnd--;
+    },
+    moveEndRight() {
+      this.thisRangeEnd++;
+    },
+  },
 };
 </script>
 

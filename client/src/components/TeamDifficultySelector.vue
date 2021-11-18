@@ -4,7 +4,12 @@ div.mt-2.p-3.rounded-lg(:style="{backgroundColor: primaryColor}")
   div.p-1
     input.mr-2(type="checkbox" v-model="thisSelected" :id="identity")
     label(:for="identity") contain this team {{ selected }}
-  NumberRangeInput
+  NumberRangeInput(
+    :min-value="0"
+    :max-value="10"
+    v-model:range-start="rangeStart"
+    v-model:range-end="rangeEnd"
+  )
 </template>
 
 <script>
@@ -12,13 +17,15 @@ import NumberRangeInput from "@/components/input/NumberRangeInput";
 
 export default {
   name: "TeamDifficultySelector",
-  components: {NumberRangeInput},
+  components: { NumberRangeInput },
   props: [
     "teamName",
     "primaryColor",
     "secondaryColor",
     "maxDifficulty",
     "selected",
+    "rangeStart",
+    "rangeEnd",
   ],
   emits: ["update:selected"],
   computed: {
