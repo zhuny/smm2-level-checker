@@ -1,19 +1,25 @@
 <template lang="pug">
 div.w-full.relative.input-box
   .horizontal-line
-  div.left-value(:style="{left: ratioLeft + '%'}")
-    .range-left-arrow(@click="moveStartLeft") &#x25C0;
-    .value {{ thisRangeStart }}
-    .range-right-arrow(@click="moveStartRight") &#x25B6;
-  div.right-value(:style="{right: ratioRight + '%'}")
-    .range-left-arrow(@click="moveEndLeft") &#x25C0;
-    .value {{ thisRangeEnd }}
-    .range-right-arrow(@click="moveEndRight") &#x25B6;
+  div.value-wrapper
+    div.value-container(:style="{right: `${gap}px`}")
+      div.left-value(:style="{left: `${ratioLeft}%`}")
+        .range-left-arrow(@click="moveStartLeft") &#x25C0;
+        .value {{ thisRangeStart }}
+        .range-right-arrow(@click="moveStartRight") &#x25B6;
+    div.value-container(:style="{left: `${gap}px`}")
+      div.right-value(:style="{right: `${ratioRight}%`}")
+        .range-left-arrow(@click="moveEndLeft") &#x25C0;
+        .value {{ thisRangeEnd }}
+        .range-right-arrow(@click="moveEndRight") &#x25B6;
 </template>
 
 <script>
 export default {
   name: "NumberRangeInput",
+  data() {
+    return { gap: 8 };
+  },
   props: {
     minValue: {
       type: Number,
@@ -83,6 +89,22 @@ export default {
     left: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .value-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+  }
+
+  .value-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
   .left-value {
