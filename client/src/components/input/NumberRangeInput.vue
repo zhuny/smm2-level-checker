@@ -1,11 +1,11 @@
 <template lang="pug">
 div.w-full.relative.input-box
   .horizontal-line
-  div.left-value
+  div.left-value(:style="{left: ratioLeft + '%'}")
     .range-left-arrow(@click="moveStartLeft") &#x25C0;
     .value {{ thisRangeStart }}
     .range-right-arrow(@click="moveStartRight") &#x25B6;
-  div.right-value
+  div.right-value(:style="{right: ratioRight + '%'}")
     .range-left-arrow(@click="moveEndLeft") &#x25C0;
     .value {{ thisRangeEnd }}
     .range-right-arrow(@click="moveEndRight") &#x25B6;
@@ -43,6 +43,15 @@ export default {
       set(value) {
         this.$emit("update:rangeEnd", value);
       },
+    },
+    rangeValue() {
+      return this.maxValue - this.minValue;
+    },
+    ratioLeft() {
+      return ((this.thisRangeStart - this.minValue) * 100) / this.rangeValue;
+    },
+    ratioRight() {
+      return ((this.maxValue - this.thisRangeEnd) * 100) / this.rangeValue;
     },
   },
   methods: {
