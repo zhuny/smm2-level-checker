@@ -21,7 +21,7 @@ import TeamDifficultySelector from "@/components/TeamDifficultySelector";
 
 export default {
   name: "RandomPick",
-  components: {TeamDifficultySelector},
+  components: { TeamDifficultySelector },
   data() {
     return {
       teamList: [],
