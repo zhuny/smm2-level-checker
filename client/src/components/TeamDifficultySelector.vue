@@ -7,8 +7,8 @@ div.mt-2.p-3.rounded-lg(:style="{backgroundColor: primaryColor}")
   NumberRangeInput(
     :min-value="0"
     :max-value="10"
-    v-model:range-start="rangeStart"
-    v-model:range-end="rangeEnd"
+    v-model:range-start="thisRangeStart"
+    v-model:range-end="thisRangeEnd"
   )
 </template>
 
@@ -27,7 +27,7 @@ export default {
     "rangeStart",
     "rangeEnd",
   ],
-  emits: ["update:selected"],
+  emits: ["update:selected", "update:rangeStart", "update:rangeEnd"],
   computed: {
     identity() {
       return this.teamName.replace(" ", "");
@@ -38,6 +38,22 @@ export default {
       },
       set(value) {
         this.$emit("update:selected", value);
+      },
+    },
+    thisRangeStart: {
+      get() {
+        return this.rangeStart;
+      },
+      set(value) {
+        this.$emit("update:rangeStart", value);
+      },
+    },
+    thisRangeEnd: {
+      get() {
+        return this.rangeEnd;
+      },
+      set(value) {
+        this.$emit("update:rangeEnd", value);
       },
     },
   },
