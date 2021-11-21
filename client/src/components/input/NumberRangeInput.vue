@@ -4,21 +4,21 @@ div.w-full.relative.input-box
   div.value-wrapper
     div.value-container(:style="{right: `${gap}px`}")
       div.left-value(:style="{left: `${ratioLeft}%`}")
-        .range-left-arrow(@click="moveStartLeft") &#x25C0;
+        .range-left-arrow(@click="moveStartLeft" v-if="isStartInner") &#x25C0;
         .value {{ thisRangeStart }}
-        .range-right-arrow(@click="moveStartRight") &#x25B6;
+        .range-right-arrow(@click="moveStartRight" v-if="isInterval") &#x25B6;
     div.value-container(:style="{left: `${gap}px`}")
       div.right-value(:style="{right: `${ratioRight}%`}")
-        .range-left-arrow(@click="moveEndLeft") &#x25C0;
+        .range-left-arrow(@click="moveEndLeft" v-if="isInterval") &#x25C0;
         .value {{ thisRangeEnd }}
-        .range-right-arrow(@click="moveEndRight") &#x25B6;
+        .range-right-arrow(@click="moveEndRight" v-if="isEndInner" ) &#x25B6;
 </template>
 
 <script>
 export default {
   name: "NumberRangeInput",
   data() {
-    return { gap: 8 };
+    return { gap: 28 };
   },
   props: {
     minValue: {
@@ -58,6 +58,15 @@ export default {
     },
     ratioRight() {
       return ((this.maxValue - this.thisRangeEnd) * 100) / this.rangeValue;
+    },
+    isInterval() {
+      return this.thisRangeStart !== this.thisRangeEnd;
+    },
+    isStartInner() {
+      return this.minValue < this.thisRangeStart;
+    },
+    isEndInner() {
+      return this.thisRangeEnd < this.maxValue;
     },
   },
   methods: {
