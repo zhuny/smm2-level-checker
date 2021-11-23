@@ -89,8 +89,8 @@ export default {
               }),
           }
         )
-        .then((data) => {
-          console.log(data);
+        .then(({ randomLevel }) => {
+          console.log(randomLevel.code);
         });
     },
   },

@@ -6,7 +6,7 @@ from graphene import relay, Scalar
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from graphql.language import ast
 from sqlalchemy import or_, and_
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 
 from server.model import Team, Maker, Level, LevelDifficulty
 
@@ -67,8 +67,17 @@ class RandomLevelSchema(graphene.Mutation):
 
     Output = LevelSchema
 
+    _valid_char = "0123456789ABCDEFGHJKLMNPQRSTUVWXY"
+
+    @classmethod
+    def _get_random_code(cls):
+        return "-".join([
+            "".join(random.choices(cls._valid_char, k=3))
+            for _ in range(3)
+        ])
+
     def mutate(self, info, team_info_list):
-        random_levels = LevelDifficultySchema.get_query(
+        query = LevelDifficultySchema.get_query(
             info
         ).filter(or_(*[
             and_(
@@ -77,11 +86,18 @@ class RandomLevelSchema(graphene.Mutation):
                 LevelDifficulty.difficulty <= team_info['range_end']
             )
             for team_info in team_info_list
-        ])).options(
-            joinedload(LevelDifficulty.level)
-        ).limit(10).all()  # 적당히 랜덤하게 쿼리 작성할 수 있도록 수정
-        if random_levels:
-            return random.choice(random_levels).level
+        ])).join(
+            LevelDifficulty.level
+        ).options(
+            contains_eager(LevelDifficulty.level)
+        ).order_by(
+            Level.code
+        )
+        random_level = query.filter(
+            Level.code >= RandomLevelSchema._get_random_code()
+        ).first() or query.first()
+        if random_level:
+            return random_level.level
 
 
 class Query(graphene.ObjectType):
