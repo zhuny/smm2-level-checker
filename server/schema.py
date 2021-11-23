@@ -4,6 +4,7 @@ import random
 import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from sqlalchemy import or_, and_
 from sqlalchemy.orm import joinedload
 
 from server.model import Team, Maker, Level, LevelDifficulty, db
@@ -39,23 +40,33 @@ def _convert(team_id):
     return int(row_id)
 
 
+class DifficultyRangeInput(graphene.InputObjectType):
+    team_id = relay.node.ID()
+    range_start = graphene.Decimal()
+    range_end = graphene.Decimal()
+
+
 class RandomLevelSchema(graphene.Mutation):
     class Arguments:
-        team_id = relay.node.ID()
-        range_start = graphene.Decimal()
-        range_end = graphene.Decimal()
+        team_info_list = graphene.List(DifficultyRangeInput)
 
     Output = LevelSchema
 
-    def mutate(self, info, team_id, range_start, range_end):
-        random_levels = LevelDifficultySchema.get_query(info).filter(
-            LevelDifficulty.team_id == _convert(team_id),
-            LevelDifficulty.difficulty >= range_start,
-            LevelDifficulty.difficulty <= range_end
-        ).options(
+    def mutate(self, info, team_info_list):
+        random_levels = LevelDifficultySchema.get_query(
+            info
+        ).filter(or_(*[
+            and_(
+                LevelDifficulty.team_id == team_info['team_id'],
+                LevelDifficulty.difficulty >= team_info['range_start'],
+                LevelDifficulty.difficulty <= team_info['range_end']
+            )
+            for team_info in team_info_list
+        ])).options(
             joinedload(LevelDifficulty.level)
         ).limit(10).all()  # 적당히 랜덤하게 쿼리 작성할 수 있도록 수정
-        return random.choice(random_levels).level
+        if random_levels:
+            return random.choice(random_levels).level
 
 
 class Query(graphene.ObjectType):
