@@ -2,12 +2,13 @@ import base64
 import random
 
 import graphene
-from graphene import relay
+from graphene import relay, Scalar
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from graphql.language import ast
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import joinedload
 
-from server.model import Team, Maker, Level, LevelDifficulty, db
+from server.model import Team, Maker, Level, LevelDifficulty
 
 
 class TeamSchema(SQLAlchemyObjectType):
@@ -34,14 +35,29 @@ class LevelDifficultySchema(SQLAlchemyObjectType):
         interfaces = relay.Node,
 
 
-def _convert(team_id):
-    decoded_id = base64.b64decode(team_id).decode()
-    schema_name, row_id = decoded_id.split(':')
-    return int(row_id)
+class Base64Key(Scalar):
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name
+
+    def serialize(self, data):
+        return base64.b64decode(f"{self.name}:{data}")
+
+    def parse_value(self, data):
+        name, key = base64.b64decode(data).decode().split(':', 1)
+        if name == self.name and key.isdigit():
+            return int(key)
+
+    @staticmethod
+    def parse_literal(data):
+        if isinstance(data, ast.StringValue):
+            name, key = base64.b64decode(data.value).decode().split(':', 1)
+            if key.isdigit():
+                return int(key)
 
 
 class DifficultyRangeInput(graphene.InputObjectType):
-    team_id = relay.node.ID()
+    team_id = Base64Key("TeamSchema")
     range_start = graphene.Decimal()
     range_end = graphene.Decimal()
 
