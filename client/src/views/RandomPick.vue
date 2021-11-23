@@ -30,7 +30,7 @@ export default {
   },
   created() {
     client
-      .query(
+      .request(
         gql`
           {
             allTeam {
@@ -60,8 +60,8 @@ export default {
   methods: {
     chooseOne() {
       console.log(this.teamList);
-    }
-  }
+    },
+  },
 };
 </script>
 
