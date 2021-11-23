@@ -22,6 +22,7 @@ class Team(db.Model):
 class Maker(db.Model):
     code = db.Column(db.Text)
     name = db.Column(db.Text)
+    creator_id = db.Column(db.Integer)
 
 
 class Level(db.Model):
