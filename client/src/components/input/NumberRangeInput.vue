@@ -2,12 +2,12 @@
 div.w-full.relative.input-box
   .horizontal-line
   div.value-wrapper
-    div.value-container(:style="{right: `${gap}px`}")
+    div.value-container.left-container
       div.left-value(:style="{left: `${ratioLeft}%`}")
         .range-left-arrow(@click="moveStartLeft" v-if="isStartInner") &#x25C0;
         .value {{ thisRangeStart }}
         .range-right-arrow(@click="moveStartRight" v-if="isInterval") &#x25B6;
-    div.value-container(:style="{left: `${gap}px`}")
+    div.value-container.right-container
       div.right-value(:style="{right: `${ratioRight}%`}")
         .range-left-arrow(@click="moveEndLeft" v-if="isInterval") &#x25C0;
         .value {{ thisRangeEnd }}
@@ -17,9 +17,6 @@ div.w-full.relative.input-box
 <script>
 export default {
   name: "NumberRangeInput",
-  data() {
-    return { gap: 28 };
-  },
   props: {
     minValue: {
       type: Number,
@@ -31,6 +28,10 @@ export default {
     },
     rangeStart: Number,
     rangeEnd: Number,
+    step: {
+      type: Number,
+      default: 1,
+    }
   },
   trims: ["update:rangeStart", "update:rangeEnd"],
   computed: {
@@ -71,16 +72,16 @@ export default {
   },
   methods: {
     moveStartLeft() {
-      this.thisRangeStart--;
+      this.thisRangeStart -= this.step;
     },
     moveStartRight() {
-      this.thisRangeStart++;
+      this.thisRangeStart += this.step;
     },
     moveEndLeft() {
-      this.thisRangeEnd--;
+      this.thisRangeEnd -= this.step;
     },
     moveEndRight() {
-      this.thisRangeEnd++;
+      this.thisRangeEnd += this.step;
     },
   },
 };
@@ -112,8 +113,16 @@ export default {
     position: absolute;
     top: 50%;
     height: 0;
-    left: 0;
-    right: 0;
+
+    &.left-container {
+      left: 0;
+      right: 28px;
+    }
+
+    &.right-container {
+      left: 28px;
+      right: 0;
+    }
   }
 
   .left-value {

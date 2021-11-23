@@ -43,11 +43,12 @@ def load_data(data_file):
 
         # setting maker first
         maker_map = collections.defaultdict(Maker, {
-            maker.code: maker
+            maker.creator_id: maker
             for maker in db.session.query(Maker)
         })
         for level in data['levels']:
-            maker_row = maker_map[level['maker_id']]
+            maker_row = maker_map[level['creator_id']]
+            maker_row.creator_id = level['creator_id']
             maker_row.code = level['maker_id']
             maker_row.name = level['creator']
             db.session.add(maker_row)
@@ -61,7 +62,7 @@ def load_data(data_file):
             level_row = level_map[level['code']]
             level_row.code = level['code']
             level_row.name = level['level_name']
-            level_row.creator = maker_map[level['maker_id']]
+            level_row.creator = maker_map[level['creator_id']]
             db.session.add(level_row)
 
         # saving difficulty

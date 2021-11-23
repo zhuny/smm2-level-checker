@@ -3,10 +3,11 @@ div.mt-2.p-3.rounded-lg(:style="{backgroundColor: primaryColor}")
   h2.p-1 {{ teamName }}
   div.p-1
     input.mr-2(type="checkbox" v-model="thisSelected" :id="identity")
-    label(:for="identity") contain this team {{ selected }}
+    label(:for="identity") contain this team
   NumberRangeInput(
     :min-value="0"
     :max-value="10"
+    :step="0.5"
     v-model:range-start="thisRangeStart"
     v-model:range-end="thisRangeEnd"
   )
