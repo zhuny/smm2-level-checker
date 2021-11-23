@@ -36,6 +36,7 @@ export default {
             allTeam {
               edges {
                 node {
+                  id
                   teamName
                   primaryColor
                   secondaryColor
@@ -59,7 +60,38 @@ export default {
   },
   methods: {
     chooseOne() {
-      console.log(this.teamList);
+      client
+        .request(
+          gql`
+            mutation getRandomLevel($lvl: [DifficultyRangeInput]) {
+              randomLevel(teamInfoList: $lvl) {
+                code
+                creator {
+                  name
+                  code
+                }
+                name
+                id
+              }
+            }
+          `,
+          {
+            lvl: this.teamList
+              .filter((team) => {
+                return team.selected;
+              })
+              .map((team) => {
+                return {
+                  teamId: team.node.id,
+                  rangeStart: team.rangeStart,
+                  rangeEnd: team.rangeEnd,
+                };
+              }),
+          }
+        )
+        .then((data) => {
+          console.log(data);
+        });
     },
   },
 };

@@ -36,24 +36,23 @@ class LevelDifficultySchema(SQLAlchemyObjectType):
 
 
 class Base64Key(Scalar):
-    def __init__(self, name: str):
+    def __init__(self, key_name: str):
         super().__init__()
-        self.name = name
+        self.key_name = key_name
 
     def serialize(self, data):
-        return base64.b64decode(f"{self.name}:{data}")
-
-    def parse_value(self, data):
-        name, key = base64.b64decode(data).decode().split(':', 1)
-        if name == self.name and key.isdigit():
-            return int(key)
+        return base64.b64decode(f"{self.key_name}:{data}")
 
     @staticmethod
-    def parse_literal(data):
+    def parse_value(data):
+        name, key = base64.b64decode(data).decode().split(':', 1)
+        if key.isdigit():
+            return int(key)
+
+    @classmethod
+    def parse_literal(cls, data):
         if isinstance(data, ast.StringValue):
-            name, key = base64.b64decode(data.value).decode().split(':', 1)
-            if key.isdigit():
-                return int(key)
+            return cls.parse_value(data.value)
 
 
 class DifficultyRangeInput(graphene.InputObjectType):
