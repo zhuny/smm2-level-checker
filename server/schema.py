@@ -107,6 +107,8 @@ class Query(graphene.ObjectType):
     all_maker = SQLAlchemyConnectionField(MakerSchema.connection)
     all_level = SQLAlchemyConnectionField(LevelSchema.connection)
 
+    level = relay.Node.Field(LevelSchema)
+
 
 class Mutation(graphene.ObjectType):
     random_level = RandomLevelSchema.Field()
