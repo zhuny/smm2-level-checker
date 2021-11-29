@@ -8,9 +8,12 @@ div
     .rounded-md.mt-2.p-3.bg-purple-500.flex(
       v-for="diff in levelInfo.difficultyList"
       key="1"
+      :style="{backgroundColor: diff.team.primaryColor}"
     )
-      div {{ diff.team.teamName }}
-      div {{ diff.difficulty }}
+      div.font-bold(
+        :style="{color: diff.team.secondaryColor}"
+      ) {{ diff.team.teamName }} :
+      div.pl-2 {{ diff.difficulty }}
 </template>
 
 <script>
@@ -48,6 +51,8 @@ export default {
                     difficulty
                     team {
                       teamName
+                      primaryColor
+                      secondaryColor
                     }
                   }
                 }
