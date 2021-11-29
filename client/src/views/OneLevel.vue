@@ -1,6 +1,8 @@
 <template lang="pug">
 div
-  h1 HI
+  h1.font-black.text-2xl {{ levelInfo.name }}
+  div
+    .mt-2.text-sm.px-3.py-1.rounded-full.bg-purple-300 {{ levelInfo.code }}
 </template>
 
 <script>
@@ -12,7 +14,8 @@ export default {
   data() {
     return {
       levelInfo: {
-        name: "",
+        name: "-",
+        code: "-",
       },
     };
   },
