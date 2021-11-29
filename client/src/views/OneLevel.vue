@@ -4,6 +4,8 @@ div
   div.flex.items-end
     .mt-2.px-3.py-1.rounded-full.text-sm.text-white.bg-purple-500 {{ levelInfo.code }}
     .ml-3.text-gray-500 {{ levelInfo.creator.name }}
+  div
+    .rounded-md(v-for="diff in levelInfo.difficultyList" key="1") {{ diff.difficulty }}
 </template>
 
 <script>
@@ -20,6 +22,7 @@ export default {
         creator: {
           name: "-",
         },
+        difficultyList: [],
       },
     };
   },
@@ -34,14 +37,32 @@ export default {
               creator {
                 name
               }
+              difficultyList {
+                edges {
+                  node {
+                    difficulty
+                  }
+                }
+              }
             }
           }
         `,
         { levelId: this.$route.params.levelId }
       )
-      .then(({ level }) => {
-        this.levelInfo = level;
-      });
+      .then(
+        ({
+          level: {
+            difficultyList: { edges: diffEdge },
+            ...level
+          },
+        }) => {
+          this.levelInfo = level;
+          this.levelInfo.difficultyList = diffEdge.map(({ node: diff }) => {
+            return diff;
+          });
+          console.log(this.levelInfo);
+        }
+      );
   },
 };
 </script>
