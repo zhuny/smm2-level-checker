@@ -4,8 +4,13 @@ div
   div.flex.items-end
     .mt-2.px-3.py-1.rounded-full.text-sm.text-white.bg-purple-500 {{ levelInfo.code }}
     .ml-3.text-gray-500 {{ levelInfo.creator.name }}
-  div
-    .rounded-md(v-for="diff in levelInfo.difficultyList" key="1") {{ diff.difficulty }}
+  div.pt-2
+    .rounded-md.mt-2.p-3.bg-purple-500.flex(
+      v-for="diff in levelInfo.difficultyList"
+      key="1"
+    )
+      div {{ diff.team.teamName }}
+      div {{ diff.difficulty }}
 </template>
 
 <script>
@@ -41,6 +46,9 @@ export default {
                 edges {
                   node {
                     difficulty
+                    team {
+                      teamName
+                    }
                   }
                 }
               }
