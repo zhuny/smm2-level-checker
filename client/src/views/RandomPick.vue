@@ -65,12 +65,6 @@ export default {
           gql`
             mutation getRandomLevel($lvl: [DifficultyRangeInput]) {
               randomLevel(teamInfoList: $lvl) {
-                code
-                creator {
-                  name
-                  code
-                }
-                name
                 id
               }
             }
@@ -89,8 +83,11 @@ export default {
               }),
           }
         )
-        .then(({ randomLevel }) => {
-          console.log(randomLevel.code);
+        .then(({ randomLevel: { id: levelId } }) => {
+          this.$router.push({
+            name: "OneLevel",
+            params: { levelId },
+          });
         });
     },
   },
