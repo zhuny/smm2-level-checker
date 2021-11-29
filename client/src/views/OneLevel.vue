@@ -1,8 +1,9 @@
 <template lang="pug">
 div
   h1.font-black.text-2xl {{ levelInfo.name }}
-  div
-    .mt-2.text-sm.px-3.py-1.rounded-full.bg-purple-300 {{ levelInfo.code }}
+  div.flex.items-end
+    .mt-2.px-3.py-1.rounded-full.text-sm.text-white.bg-purple-500 {{ levelInfo.code }}
+    .ml-3.text-gray-500 {{ levelInfo.creator.name }}
 </template>
 
 <script>
@@ -16,6 +17,9 @@ export default {
       levelInfo: {
         name: "-",
         code: "-",
+        creator: {
+          name: "-",
+        },
       },
     };
   },
@@ -27,6 +31,9 @@ export default {
             level(id: $levelId) {
               code
               name
+              creator {
+                name
+              }
             }
           }
         `,
