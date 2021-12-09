@@ -1,3 +1,4 @@
+from graphene.relay.connection import Connection
 from graphene.types.definitions import GrapheneObjectType
 from graphene.utils.str_converters import to_snake_case
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
@@ -25,7 +26,10 @@ class SQLAlchemyQueryField(SQLAlchemyConnectionField):
     def _is_sql_schema(cls, schema):
         return (
             isinstance(schema, GrapheneObjectType) and
-            issubclass(schema.graphene_type, SQLAlchemyObjectType)
+            (
+                issubclass(schema.graphene_type, SQLAlchemyObjectType) or
+                issubclass(schema.graphene_type, Connection)
+            )
         )
 
     @classmethod
