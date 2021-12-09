@@ -33,30 +33,59 @@ class SQLAlchemyQueryField(SQLAlchemyConnectionField):
         )
 
     @classmethod
-    def _build_query_join_schema(cls, model, query, parent_type, asts):
+    def _get_sql_model(cls, t):
+        return t.graphene_type._meta.model
+
+    @classmethod
+    def _build_query_join_schema(cls,
+                                 model, parent_type, asts,
+                                 joined=None,
+                                 follow_backref=False):
         for f in asts:
             this_schema = cls._get_schema(parent_type, f.name.value)
             this_type = this_schema.type
+            nested_follow = follow_backref
             if cls._is_sql_schema(parent_type) and cls._is_sql_schema(this_type):
+                # backref로 생성된 경우,
+                # connection-node를 거치고 나서 model정보를 알 수 있다
+                if follow_backref:
+                    model = cls._get_sql_model(parent_type)
+
                 # TODO: auto_camel_case = False 인 경우 구분해주기
-                # TODO: nested한 경우도 처리해주기
                 snake_name = to_snake_case(f.name.value)
-                query = query.options(
-                    joinedload(getattr(model, snake_name))
-                )
+
+                # column join하기
+                column = getattr(model, snake_name)
+                if joined:
+                    joined = joined.joinedload(column)
+                else:
+                    joined = joinedload(column)
+
+                # nested를 위해 map column을 가져온다
+                if issubclass(this_type.graphene_type, Connection):
+                    nested_follow = True
+                else:
+                    model = cls._get_sql_model(this_type)
+
+            # recursively 확인
             if f.selection_set:
-                query = cls._build_query_join_schema(
+                yield from cls._build_query_join_schema(
                     model,
-                    query,
                     this_type,
-                    f.selection_set.selections
+                    f.selection_set.selections,
+                    joined,
+                    nested_follow
                 )
-        return query
+            elif joined:
+                yield joined
 
     @classmethod
     def get_query(cls, model, info: ResolveInfo = None, sort=None, **args):
         query = super().get_query(model, info, sort=sort, **args)
-        root_type = info.schema.get_query_type()
-        return cls._build_query_join_schema(
-            model, query, root_type, info.field_asts
+        return query.options(
+            *cls._build_query_join_schema(
+                model,
+                info.schema.get_query_type(),
+                info.field_asts
+            )
         )
