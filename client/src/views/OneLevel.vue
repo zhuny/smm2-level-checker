@@ -7,7 +7,7 @@ div
   div.pt-2
     .rounded-md.mt-2.p-3.bg-purple-500.flex(
       v-for="diff in levelInfo.difficultyList"
-      key="1"
+      :key="diff.id"
       :style="{backgroundColor: diff.team.primaryColor}"
     )
       div.font-bold(
@@ -48,6 +48,7 @@ export default {
               difficultyList {
                 edges {
                   node {
+                    id
                     difficulty
                     team {
                       teamName
