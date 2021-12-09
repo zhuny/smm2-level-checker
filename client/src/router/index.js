@@ -1,11 +1,17 @@
-import {createRouter, createWebHistory} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import RandomPick from "@/views/RandomPick";
+import OneLevel from "@/views/OneLevel";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: RandomPick,
+  },
+  {
+    path: "/level/:levelId",
+    name: "OneLevel",
+    component: OneLevel,
   },
 ];
 

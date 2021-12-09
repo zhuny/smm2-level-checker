@@ -3,12 +3,13 @@ import random
 
 import graphene
 from graphene import relay, Scalar
-from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql.language import ast
 from sqlalchemy import or_, and_
-from sqlalchemy.orm import joinedload, contains_eager
+from sqlalchemy.orm import contains_eager
 
 from server.model import Team, Maker, Level, LevelDifficulty
+from server.schema_util import SQLAlchemyQueryField
 
 
 class TeamSchema(SQLAlchemyObjectType):
@@ -103,9 +104,11 @@ class RandomLevelSchema(graphene.Mutation):
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
 
-    all_team = SQLAlchemyConnectionField(TeamSchema.connection)
-    all_maker = SQLAlchemyConnectionField(MakerSchema.connection)
-    all_level = SQLAlchemyConnectionField(LevelSchema.connection)
+    all_team = SQLAlchemyQueryField(TeamSchema)
+    all_maker = SQLAlchemyQueryField(MakerSchema)
+    all_level = SQLAlchemyQueryField(LevelSchema)
+
+    level = relay.Node.Field(LevelSchema)
 
 
 class Mutation(graphene.ObjectType):

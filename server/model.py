@@ -34,9 +34,9 @@ class Level(db.Model):
 
 class LevelDifficulty(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
-    team = db.relationship("Team")
+    team = db.relationship("Team", backref=db.backref('level_list'))
     level_id = db.Column(db.Integer, db.ForeignKey("level.id"))
-    level = db.relationship("Level")
+    level = db.relationship("Level", backref=db.backref('difficulty_list'))
 
     difficulty = db.Column(db.DECIMAL)
     clears = db.Column(db.Integer)
