@@ -8,7 +8,7 @@ from graphql.language import ast
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import contains_eager
 
-from server.model import Team, Maker, Level, LevelDifficulty
+from server.model import Team, Maker, Level, LevelDifficulty, LevelClear
 from server.schema_util import SQLAlchemyQueryField
 
 
@@ -24,10 +24,19 @@ class MakerSchema(SQLAlchemyObjectType):
         interfaces = relay.Node,
 
 
+class LevelClearSchema(SQLAlchemyObjectType):
+    class Meta:
+        model = LevelClear
+        interfaces = relay.Node,
+
+
 class LevelSchema(SQLAlchemyObjectType):
     class Meta:
         model = Level
         interfaces = relay.Node,
+        exclude_fields = "clear_list",
+
+    clear_info = graphene.Field(LevelClearSchema)
 
 
 class LevelDifficultySchema(SQLAlchemyObjectType):
