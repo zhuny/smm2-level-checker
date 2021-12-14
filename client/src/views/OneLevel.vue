@@ -15,7 +15,13 @@ div
       ) {{ diff.team.teamName }} :
       div.pl-2 {{ diff.difficulty }}
   div.pt-2
-    button.bg-purple-500.text-white.rounded-md.p-3.w-full CLEAR
+    button.bg-purple-500.text-white.rounded-md.p-3.w-full(
+      @click="clearLevel"
+      v-if="!levelInfo.clearInfo"
+    ) CLEAR
+    div.bg-purple-300.text-white.rounded-md.p-3.w-full.text-center(
+      v-else=""
+    ) DONE - {{ levelInfo.clearInfo.clearAt }}
 </template>
 
 <script>
@@ -32,6 +38,7 @@ export default {
         creator: {
           name: "-",
         },
+        clearInfo: null,
         difficultyList: [],
       },
     };
@@ -81,6 +88,21 @@ export default {
           });
         }
       );
+  },
+  methods: {
+    clearLevel() {
+      console.log("HI");
+      client.request(
+        gql`
+          mutation postClearLevel($levelId: Base64Key) {
+            clearLevel(levelId: $levelId) {
+              id
+            }
+          }
+        `,
+        { levelId: this.$route.params.levelId }
+      );
+    },
   },
 };
 </script>
