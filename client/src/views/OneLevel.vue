@@ -92,16 +92,22 @@ export default {
   methods: {
     clearLevel() {
       console.log("HI");
-      client.request(
-        gql`
-          mutation postClearLevel($levelId: Base64Key) {
-            clearLevel(levelId: $levelId) {
-              id
+      client
+        .request(
+          gql`
+            mutation postClearLevel($levelId: Base64Key) {
+              clearLevel(levelId: $levelId) {
+                clearInfo {
+                  clearAt
+                }
+              }
             }
-          }
-        `,
-        { levelId: this.$route.params.levelId }
-      );
+          `,
+          { levelId: this.$route.params.levelId }
+        )
+        .then(({ clearLevel: { clearInfo } }) => {
+          this.levelInfo.clearInfo = clearInfo;
+        });
     },
   },
 };
