@@ -33,20 +33,19 @@ class Level(db.Model):
     creator = db.relationship("Maker")
     name = db.Column(db.Text)
 
-#     @hybrid_property
-#     def clear_info(self):
-#         for clear in self.clear_list:
-#             if clear.user_id == current_user.id:
-#                 return clear
-#
-#     @clear_info.expression
-#     def clear_info(cls):
-#         return select(
-#             LevelClear
-#         ).where(
-#             cls.id == LevelClear.level_id,
-#             LevelClear.user_id == current_user.id
-#         ).first()
+    @hybrid_property
+    def clear_info(self):
+        for clear in self.clear_list:
+            return clear
+
+    @clear_info.expression
+    def clear_info(cls):
+        return select(
+            LevelClear
+        ).where(
+            cls.id == LevelClear.level_id,
+            LevelClear.user_id == current_user.user_id
+        ).first()
 
 
 class LevelClear(db.Model):

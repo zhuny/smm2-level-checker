@@ -2,13 +2,14 @@ import base64
 import random
 
 import graphene
+from flask_login import current_user
 from graphene import relay, Scalar
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphql.language import ast
-from sqlalchemy import or_, and_
-from sqlalchemy.orm import contains_eager
+from sqlalchemy import or_, and_, func
+from sqlalchemy.orm import contains_eager, joinedload
 
-from server.model import Team, Maker, Level, LevelDifficulty, LevelClear
+from server.model import Team, Maker, Level, LevelDifficulty, LevelClear, db
 from server.schema_util import SQLAlchemyQueryField
 
 
@@ -110,6 +111,33 @@ class RandomLevelSchema(graphene.Mutation):
             return random_level.level
 
 
+class ClearLevelSchema(graphene.Mutation):
+    class Arguments:
+        level_id = Base64Key("LevelSchema")
+
+    Output = LevelSchema
+
+    def mutate(self, info, level_id):
+        print(current_user)
+        if current_user.is_anonymous:
+            return
+
+        level = LevelSchema.get_query(
+            info
+        ).filter(
+            Level.id == level_id
+        ).first()
+        level.clear_list.append(
+            LevelClear(
+                user_id=current_user.user_id,
+                clear_at=func.now()
+            )
+        )
+        db.session.add(level)
+        db.session.commit()
+        return level
+
+
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
 
@@ -122,6 +150,7 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     random_level = RandomLevelSchema.Field()
+    clear_level = ClearLevelSchema.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
