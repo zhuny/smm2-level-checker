@@ -1,6 +1,8 @@
 from flask import Flask
+from flask_login import current_user
 from flask_sqlalchemy import SQLAlchemy, Model
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, and_, select
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class ModelBase(Model):
@@ -30,6 +32,27 @@ class Level(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey("maker.id"))
     creator = db.relationship("Maker")
     name = db.Column(db.Text)
+
+    @hybrid_property
+    def clear_info(self):
+        for clear in self.clear_list:
+            return clear
+
+    @clear_info.expression
+    def clear_info(cls):
+        return select(
+            LevelClear
+        ).where(
+            cls.id == LevelClear.level_id,
+            LevelClear.user_id == current_user.user_id
+        ).first()
+
+
+class LevelClear(db.Model):
+    level_id = db.Column(db.Integer, db.ForeignKey("level.id"))
+    level = db.relationship("Level", backref=db.backref("clear_list"))
+    user_id = db.Column(db.Integer, index=True)
+    clear_at = db.Column(db.DateTime)
 
 
 class LevelDifficulty(db.Model):
