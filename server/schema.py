@@ -118,7 +118,6 @@ class ClearLevelSchema(graphene.Mutation):
     Output = LevelSchema
 
     def mutate(self, info, level_id):
-        print(current_user)
         if current_user.is_anonymous:
             return
 
