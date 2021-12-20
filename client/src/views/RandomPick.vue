@@ -12,7 +12,10 @@ div
     v-model:rangeStart="team.rangeStart"
     v-model:rangeEnd="team.rangeEnd"
     )
-  button.rounded-lg.w-full.mt-2.p-2.bg-purple-300(@click="chooseOne") Pick One!
+  button.rounded-lg.w-full.mt-2.p-2(
+    @click="chooseOne"
+    :class="{'bg-gray-300': !hasSelected, 'bg-purple-300': hasSelected}"
+  ) Pick One!
 </template>
 
 <script>
@@ -60,6 +63,10 @@ export default {
   },
   methods: {
     chooseOne() {
+      if (!this.hasSelected) {
+        return;
+      }
+
       client
         .request(
           gql`
@@ -70,17 +77,13 @@ export default {
             }
           `,
           {
-            lvl: this.teamList
-              .filter((team) => {
-                return team.selected;
-              })
-              .map((team) => {
-                return {
-                  teamId: team.node.id,
-                  rangeStart: team.rangeStart,
-                  rangeEnd: team.rangeEnd,
-                };
-              }),
+            lvl: this.selectedTeam.map((team) => {
+              return {
+                teamId: team.node.id,
+                rangeStart: team.rangeStart,
+                rangeEnd: team.rangeEnd,
+              };
+            }),
           }
         )
         .then(({ randomLevel: { id: levelId } }) => {
@@ -89,6 +92,16 @@ export default {
             params: { levelId },
           });
         });
+    },
+  },
+  computed: {
+    hasSelected() {
+      return this.selectedTeam.length > 0;
+    },
+    selectedTeam() {
+      return this.teamList.filter((team) => {
+        return team.selected;
+      });
     },
   },
 };
