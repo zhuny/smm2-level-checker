@@ -1,0 +1,46 @@
+runtime: python38
+service: smm2
+
+handlers:
+  # This configures Google App Engine to serve the files in the app's static
+  # directory.
+  # each path for static file and others are redirected
+- url: /vue/css
+  static_dir: frontend/dist/css
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /vue/js
+  static_dir: frontend/dist/js
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /vue/favicon.ico
+  static_files: frontend/dist/favicon.ico
+  upload: frontend/dist/favicon\.ico
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /vue
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /vue/.*
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /
+  static_files: frontend/dist/index.html
+  upload: frontend/dist/index\.html
+  secure: always
+  redirect_http_response_code: 301
+
+  # This handler routes all requests not caught above to your main app. It is
+  # required when static routes are defined, but can be omitted (along with
+  # the entire handlers section) when there are no static files defined.
+- url: /api/graphql
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
