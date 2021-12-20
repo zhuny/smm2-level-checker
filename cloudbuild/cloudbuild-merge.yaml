@@ -3,6 +3,11 @@ steps:
     dir: 'client'
     args:
       - install
+  - name: gcr.io/cloud-builders/gsutil
+    args:
+      - cp
+      - gs://${_SETTING_BUCKET}/${_SERVICE_NAME}/env-${_ENV}.env
+      - ./client/src/.env
   - name: gcr.io/cloud-builders/npm
     dir: 'client'
     args:
