@@ -12,13 +12,18 @@ div
     v-model:rangeStart="team.rangeStart"
     v-model:rangeEnd="team.rangeEnd"
     )
-  button.rounded-lg.w-full.mt-2.p-2.bg-purple-300(@click="chooseOne") Pick One!
+  button.rounded-lg.w-full.mt-2.p-2(
+    @click="chooseOne"
+    :class="{'bg-gray-300': !hasSelected, 'bg-purple-300': hasSelected}"
+  ) Pick One!
 </template>
 
 <script>
 import { client } from "@/util/graphql";
 import gql from "graphql-tag";
 import TeamDifficultySelector from "@/components/TeamDifficultySelector";
+
+const saveSelect = {};
 
 export default {
   name: "RandomPick",
@@ -54,12 +59,23 @@ export default {
             selected: false,
             rangeStart: 0,
             rangeEnd: 0,
+            ...saveSelect[node.id],
           };
         });
       });
   },
   methods: {
     chooseOne() {
+      if (!this.hasSelected) {
+        return;
+      }
+
+      this.teamList.forEach(
+        ({ node: { id: teamId }, selected, rangeStart, rangeEnd }) => {
+          saveSelect[teamId] = { selected, rangeStart, rangeEnd };
+        }
+      );
+
       client
         .request(
           gql`
@@ -70,17 +86,13 @@ export default {
             }
           `,
           {
-            lvl: this.teamList
-              .filter((team) => {
-                return team.selected;
-              })
-              .map((team) => {
-                return {
-                  teamId: team.node.id,
-                  rangeStart: team.rangeStart,
-                  rangeEnd: team.rangeEnd,
-                };
-              }),
+            lvl: this.selectedTeam.map((team) => {
+              return {
+                teamId: team.node.id,
+                rangeStart: team.rangeStart,
+                rangeEnd: team.rangeEnd,
+              };
+            }),
           }
         )
         .then(({ randomLevel: { id: levelId } }) => {
@@ -89,6 +101,16 @@ export default {
             params: { levelId },
           });
         });
+    },
+  },
+  computed: {
+    hasSelected() {
+      return this.selectedTeam.length > 0;
+    },
+    selectedTeam() {
+      return this.teamList.filter((team) => {
+        return team.selected;
+      });
     },
   },
 };
