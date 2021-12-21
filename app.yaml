@@ -5,29 +5,19 @@ handlers:
   # This configures Google App Engine to serve the files in the app's static
   # directory.
   # each path for static file and others are redirected
-- url: /vue/css
+- url: /css
   static_dir: client/dist/css
   secure: always
   redirect_http_response_code: 301
 
-- url: /vue/js
+- url: /js
   static_dir: client/dist/js
   secure: always
   redirect_http_response_code: 301
 
-- url: /vue/favicon.ico
+- url: /favicon.ico
   static_files: client/dist/favicon.ico
   upload: client/dist/favicon\.ico
-  secure: always
-  redirect_http_response_code: 301
-
-- url: /vue
-  script: auto
-  secure: always
-  redirect_http_response_code: 301
-
-- url: /vue/.*
-  script: auto
   secure: always
   redirect_http_response_code: 301
 
