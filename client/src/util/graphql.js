@@ -1,5 +1,3 @@
 import { GraphQLClient } from "graphql-request";
 
-export const client = new GraphQLClient(
-  "http://localhost:5000/api/graphql" // 환경변수로 빼 두기
-);
+export const client = new GraphQLClient(process.env.VUE_APP_API_URL);

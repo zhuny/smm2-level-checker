@@ -1,0 +1,24 @@
+steps:
+  - name: gcr.io/cloud-builders/npm
+    dir: 'client'
+    args:
+      - install
+  - name: gcr.io/cloud-builders/gsutil
+    args:
+      - cp
+      - gs://${_SETTING_BUCKET}/${_SERVICE_NAME}/env-${_ENV}.env
+      - ./client/src/.env
+  - name: gcr.io/cloud-builders/npm
+    dir: 'client'
+    args:
+      - run
+      - build
+  - name: gcr.io/cloud-builders/gsutil
+    args:
+      - cp
+      - gs://${_SETTING_BUCKET}/${_SERVICE_NAME}/settings-${_ENV}.json
+      - ./settings.json
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - app
+      - deploy
