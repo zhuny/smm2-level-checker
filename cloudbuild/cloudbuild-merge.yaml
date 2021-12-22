@@ -7,7 +7,7 @@ steps:
     args:
       - cp
       - gs://${_SETTING_BUCKET}/${_SERVICE_NAME}/env-${_ENV}.env
-      - ./client/src/.env
+      - ./client/.env
   - name: gcr.io/cloud-builders/npm
     dir: 'client'
     args:
