@@ -14,6 +14,7 @@ app_group = AppGroup('init')
 @app_group.command('table')
 def init_create():
     db.create_all()
+    # LevelClear.__table__.create(db.session.bind)
 
 
 def from_string(string):
@@ -66,10 +67,14 @@ def load_data(data_file):
             db.session.add(level_row)
 
         # saving difficulty
-        difficulty_map = collections.defaultdict(LevelDifficulty, {
-            difficulty.level.code: difficulty
-            for difficulty in db.session.query(LevelDifficulty)
-        })
+        difficulty_map = collections.defaultdict(LevelDifficulty)
+        if team_row.id is not None:
+            query = db.session.query(LevelDifficulty).filter(
+                LevelDifficulty.level_id == team_row.id
+            )
+            for difficulty in query:
+                difficulty_map[difficulty.level.code] = difficulty
+
         for level in data['levels']:
             difficulty_row = difficulty_map[level['code']]
             difficulty_row.team = team_row
