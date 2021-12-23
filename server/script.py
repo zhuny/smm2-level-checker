@@ -14,6 +14,7 @@ app_group = AppGroup('init')
 @app_group.command('table')
 def init_create():
     db.create_all()
+    # LevelClear.__table__.create(db.session.bind)
 
 
 def from_string(string):
