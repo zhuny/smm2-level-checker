@@ -20,6 +20,30 @@ class Team(db.Model):
     secondary_color = db.Column(db.Text)
     max_difficulty = db.Column(db.Integer)
 
+    @hybrid_property
+    def search_option(self):
+        for option in self.option_list:
+            return option
+
+    @search_option.expression
+    def search_option(cls):
+        return select(
+            TeamSearchOption
+        ).where(
+            TeamSearchOption.team_id == Team.id,
+            TeamSearchOption.user_id == current_user.id
+        ).first()
+
+
+class TeamSearchOption(db.Model):
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
+    team = db.relationship("Team", backref=db.backref("option_list"))
+    user_id = db.Column(db.Integer, index=True)
+
+    selected = db.Column(db.Boolean)
+    range_start = db.Column(db.DECIMAL)
+    range_end = db.Column(db.DECIMAL)
+
 
 class Maker(db.Model):
     code = db.Column(db.Text)
