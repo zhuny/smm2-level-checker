@@ -56,6 +56,11 @@ class SQLAlchemyQueryField(SQLAlchemyConnectionField):
 
                 # column join하기
                 column = getattr(model, snake_name)
+
+                if isinstance(column, property):
+                    # join을 할 수 없는 상황인 경우 스킵한다.
+                    continue
+
                 if joined:
                     joined = joined.joinedload(column)
                 else:
