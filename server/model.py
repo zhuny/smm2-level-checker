@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import current_user
 from flask_sqlalchemy import SQLAlchemy, Model
-from sqlalchemy import Column, Integer, and_, select
+from sqlalchemy import Column, Integer, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
@@ -20,19 +20,12 @@ class Team(db.Model):
     secondary_color = db.Column(db.Text)
     max_difficulty = db.Column(db.Integer)
 
-    @hybrid_property
+    @property
     def search_option(self):
+        # Query Optimization
         for option in self.option_list:
-            return option
-
-    @search_option.expression
-    def search_option(cls):
-        return select(
-            TeamSearchOption
-        ).where(
-            TeamSearchOption.team_id == Team.id,
-            TeamSearchOption.user_id == current_user.id
-        ).first()
+            if option.user_id == current_user.user_id:
+                return option
 
 
 class TeamSearchOption(db.Model):
