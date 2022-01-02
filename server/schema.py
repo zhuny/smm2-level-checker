@@ -9,14 +9,23 @@ from graphql.language import ast
 from sqlalchemy import or_, and_, func
 from sqlalchemy.orm import contains_eager, joinedload
 
-from server.model import Team, Maker, Level, LevelDifficulty, LevelClear, db
+from server.model import Team, Maker, Level, LevelDifficulty, LevelClear, db, TeamSearchOption
 from server.schema_util import SQLAlchemyQueryField
+
+
+class TeamSearchOptionSchema(SQLAlchemyObjectType):
+    class Meta:
+        model = TeamSearchOption
+        interfaces = relay.Node,
 
 
 class TeamSchema(SQLAlchemyObjectType):
     class Meta:
         model = Team
         interfaces = relay.Node,
+        exclude_fields = "option_list",
+
+    search_option = graphene.Field(TeamSearchOptionSchema)
 
 
 class MakerSchema(SQLAlchemyObjectType):
