@@ -1,5 +1,6 @@
 import base64
 import random
+from typing import Dict
 
 import graphene
 from flask_login import current_user
@@ -9,14 +10,23 @@ from graphql.language import ast
 from sqlalchemy import or_, and_, func
 from sqlalchemy.orm import contains_eager, joinedload
 
-from server.model import Team, Maker, Level, LevelDifficulty, LevelClear, db
+from server.model import Team, Maker, Level, LevelDifficulty, LevelClear, db, TeamSearchOption
 from server.schema_util import SQLAlchemyQueryField
+
+
+class TeamSearchOptionSchema(SQLAlchemyObjectType):
+    class Meta:
+        model = TeamSearchOption
+        interfaces = relay.Node,
 
 
 class TeamSchema(SQLAlchemyObjectType):
     class Meta:
         model = Team
         interfaces = relay.Node,
+        exclude_fields = "option_list",
+
+    search_option = graphene.Field(TeamSearchOptionSchema)
 
 
 class MakerSchema(SQLAlchemyObjectType):
@@ -87,7 +97,32 @@ class RandomLevelSchema(graphene.Mutation):
             for _ in range(3)
         ])
 
+    @classmethod
+    def _save_team_info(cls, team_info_list):
+        query = db.session.query(TeamSearchOption).filter(
+            TeamSearchOption.user_id == current_user.user_id
+        )
+        option_map: Dict[int, TeamSearchOption] = {
+            row.team_id: row
+            for row in query
+        }
+        for row in option_map.values():
+            row.selected = False
+        for team_info in team_info_list:
+            if team_info['team_id'] in option_map:
+                row = option_map[team_info['team_id']]
+            else:
+                row = option_map[team_info['team_id']] = TeamSearchOption()
+                row.user_id = current_user.user_id
+                row.team_id = team_info['team_id']
+
+            row.range_start = team_info['range_start']
+            row.range_end = team_info['range_end']
+            row.selected = True
+        db.session.add_all(option_map.values())
+
     def mutate(self, info, team_info_list):
+        # 조건에 맞는 맵을 쿼리한다.
         query = LevelDifficultySchema.get_query(
             info
         ).filter(or_(*[
@@ -107,6 +142,12 @@ class RandomLevelSchema(graphene.Mutation):
         random_level = query.filter(
             Level.code >= RandomLevelSchema._get_random_code()
         ).first() or query.first()
+
+        # 검색한 조건을 이후에 재사용하기 위해 저장한다.
+        RandomLevelSchema._save_team_info(team_info_list)
+
+        db.session.commit()
+
         if random_level:
             return random_level.level
 

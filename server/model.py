@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import current_user
 from flask_sqlalchemy import SQLAlchemy, Model
-from sqlalchemy import Column, Integer, and_, select
+from sqlalchemy import Column, Integer, select
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
@@ -19,6 +19,23 @@ class Team(db.Model):
     primary_color = db.Column(db.Text)
     secondary_color = db.Column(db.Text)
     max_difficulty = db.Column(db.Integer)
+
+    @property
+    def search_option(self):
+        # Query Optimization
+        for option in self.option_list:
+            if option.user_id == current_user.user_id:
+                return option
+
+
+class TeamSearchOption(db.Model):
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
+    team = db.relationship("Team", backref=db.backref("option_list"))
+    user_id = db.Column(db.Integer, index=True)
+
+    selected = db.Column(db.Boolean)
+    range_start = db.Column(db.DECIMAL)
+    range_end = db.Column(db.DECIMAL)
 
 
 class Maker(db.Model):

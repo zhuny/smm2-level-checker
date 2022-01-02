@@ -28,4 +28,8 @@ def init(app: Flask):
             def __init__(self):
                 self.user_id = 83
 
+            @property
+            def is_anonymous(self):
+                return False
+
         login_manager.anonymous_user = SuperUser

@@ -23,8 +23,6 @@ import { client } from "@/util/graphql";
 import gql from "graphql-tag";
 import TeamDifficultySelector from "@/components/TeamDifficultySelector";
 
-const saveSelect = {};
-
 export default {
   name: "RandomPick",
   components: { TeamDifficultySelector },
@@ -46,6 +44,11 @@ export default {
                   primaryColor
                   secondaryColor
                   maxDifficulty
+                  searchOption {
+                    selected
+                    rangeStart
+                    rangeEnd
+                  }
                 }
               }
             }
@@ -59,7 +62,7 @@ export default {
             selected: false,
             rangeStart: 0,
             rangeEnd: 0,
-            ...saveSelect[node.id],
+            ...node.searchOption,
           };
         });
       });
@@ -69,12 +72,6 @@ export default {
       if (!this.hasSelected) {
         return;
       }
-
-      this.teamList.forEach(
-        ({ node: { id: teamId }, selected, rangeStart, rangeEnd }) => {
-          saveSelect[teamId] = { selected, rangeStart, rangeEnd };
-        }
-      );
 
       client
         .request(

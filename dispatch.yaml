@@ -1,0 +1,3 @@
+dispatch:
+  - url: smm.zhuny.co.kr/*
+    service: smm2

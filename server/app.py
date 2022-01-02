@@ -26,8 +26,11 @@ def create_app():
 
     # register script
     init_script(app)
+    
+    # support login
+    init_login(app)
 
     # CORS
-    CORS(app, resources={"*": {"origins": "*"}})
+    CORS(app, resources={"/api/graphql": {"origins": "*"}})
 
     return app
