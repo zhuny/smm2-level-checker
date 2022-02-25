@@ -185,6 +185,8 @@ class Query(graphene.ObjectType):
     all_maker = SQLAlchemyQueryField(MakerSchema)
     all_level = SQLAlchemyQueryField(LevelSchema)
 
+    team = relay.Node.Field(TeamSchema)
+    maker = relay.Node.Field(MakerSchema)
     level = relay.Node.Field(LevelSchema)
 
 
