@@ -46,6 +46,7 @@ class DataController:
     @classmethod
     def upsert_maker(cls,
                      maker_code,
+                     /, *,
                      name=None, creator_id=None):
         maker_row = db.session.query(
             Maker
@@ -139,7 +140,11 @@ class LoadNymmData:
         team = DataController.upsert_team("nymm")
 
         for info in self.read_data():
-            print(info)
+            maker = DataController.upsert_maker(
+                info['makerId'],
+                name=info['makerName']
+            )
+            print(maker)
 
     def read_data(self):
         with open(self.data_file, encoding="utf8") as f:
