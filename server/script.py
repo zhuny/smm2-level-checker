@@ -21,9 +21,9 @@ def from_string(string):
     return datetime.datetime.fromisoformat(string.strip('Z'))
 
 
-@app_group.command('load')
+@app_group.command('load-team')
 @click.argument('data_file')
-def load_data(data_file):
+def load_team_data(data_file):
     with open(data_file, encoding="utf8") as f:
         data = json.load(f)
 
