@@ -60,6 +60,23 @@ class DataController:
         db.session.add(maker_row)
         return maker_row
 
+    @classmethod
+    def upsert_level(cls,
+                     level_code,
+                     /, *,
+                     name=None, creator=None):
+        level_row = db.session.query(
+            Level
+        ).filter(
+            Level.code == level_code
+        ).first() or Level(code=level_code)
+
+        level_row.name = name
+        level_row.creator = creator
+
+        db.session.add(level_row)
+        return level_row
+
 
 @app_group.command('load-team')
 @click.argument('data_file')
@@ -93,11 +110,11 @@ def load_team_data(data_file):
             for level in db.session.query(Level)
         })
         for level in data['levels']:
-            level_row = level_map[level['code']]
-            level_row.code = level['code']
-            level_row.name = level['level_name']
-            level_row.creator = maker_map[level['creator_id']]
-            db.session.add(level_row)
+            DataController.upsert_level(
+                level['code'],
+                name=level['level_name'],
+                creator=maker_map[level['creator_id']]
+            )
 
         # saving difficulty
         difficulty_map = collections.defaultdict(LevelDifficulty)
