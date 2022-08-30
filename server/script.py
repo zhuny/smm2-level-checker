@@ -43,6 +43,22 @@ class DataController:
         db.session.add(team_row)
         return team_row
 
+    @classmethod
+    def upsert_maker(cls,
+                     maker_code,
+                     name=None, creator_id=None):
+        maker_row = db.session.query(
+            Maker
+        ).filter(
+            Maker.code == maker_code
+        ).first() or Maker(code=maker_code)
+
+        maker_row.name = name
+        maker_row.creator_id = creator_id
+
+        db.session.add(maker_row)
+        return maker_row
+
 
 @app_group.command('load-team')
 @click.argument('data_file')
@@ -62,16 +78,13 @@ def load_team_data(data_file):
         )
 
         # setting maker first
-        maker_map = collections.defaultdict(Maker, {
-            maker.creator_id: maker
-            for maker in db.session.query(Maker)
-        })
+        maker_map = {}
         for level in data['levels']:
-            maker_row = maker_map[level['creator_id']]
-            maker_row.creator_id = level['creator_id']
-            maker_row.code = level['maker_id']
-            maker_row.name = level['creator']
-            db.session.add(maker_row)
+            maker_map[level['creator_id']] = DataController.upsert_maker(
+                level['maker_id'],
+                name=level['creator'],
+                creator_id=level['creator_id']
+            )
 
         # setting level
         level_map = collections.defaultdict(Level, {
