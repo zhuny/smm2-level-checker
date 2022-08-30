@@ -111,5 +111,32 @@ def load_team_data(data_file):
     db.session.commit()
 
 
+@app_group.command('load-nymm')
+@click.argument('year', 'data_file')
+class LoadNymmData:
+    def __init__(self, year, data_file):
+        self.year = int(year)
+        self.data_file = data_file
+
+        self.load()
+
+    def load(self):
+        # save team table
+        team = DataController.upsert_team("nymm")
+
+        for info in self.read_data():
+            print(info)
+
+    def read_data(self):
+        with open(self.data_file, encoding="utf8") as f:
+            data_line = json.load(f)
+            attr_list = data_line.pop(0)
+            data_line.pop()
+            data_line.pop()
+            for raw in data_line:
+                info = dict(zip(attr_list, raw))
+                yield info
+
+
 def init(app: Flask):
     app.cli.add_command(app_group)
