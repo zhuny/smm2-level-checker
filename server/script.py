@@ -125,7 +125,8 @@ def load_team_data(data_file):
 
 
 @app_group.command('load-nymm')
-@click.argument('year', 'data_file')
+@click.argument('year')
+@click.argument('data_file')
 class LoadNymmData:
     def __init__(self, year, data_file):
         self.year = int(year)
