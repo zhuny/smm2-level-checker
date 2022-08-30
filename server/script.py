@@ -21,6 +21,29 @@ def from_string(string):
     return datetime.datetime.fromisoformat(string.strip('Z'))
 
 
+class DataController:
+    @classmethod
+    def upsert_team(cls,
+                    team_name,
+                    discord_invite=None, twitter_user=None,
+                    primary_color=None, secondary_color=None,
+                    max_difficulty=None) -> Team:
+        team_row = db.session.query(
+            Team
+        ).filter(
+            Team.team_name == team_name
+        ).first() or Team(team_name=team_name)
+
+        team_row.discord_invite = discord_invite
+        team_row.twitter_user = twitter_user
+        team_row.primary_color = primary_color
+        team_row.secondary_color = secondary_color
+        team_row.max_difficulty = max_difficulty
+
+        db.session.add(team_row)
+        return team_row
+
+
 @app_group.command('load-team')
 @click.argument('data_file')
 def load_team_data(data_file):
@@ -29,18 +52,14 @@ def load_team_data(data_file):
 
         # save team table
         team_setting = data['teamSettings']
-        team_row = db.session.query(
-            Team
-        ).filter(
-            Team.team_name == team_setting['TeamName']
-        ).first() or Team()
-        team_row.team_name = team_setting['TeamName']
-        team_row.discord_invite = team_setting['DiscordInvite']
-        team_row.twitter_user = team_setting['TwitterUser']
-        team_row.primary_color = team_setting['PrimaryColor']
-        team_row.secondary_color = team_setting['SecondaryColor']
-        team_row.max_difficulty = team_setting['maxDifficulty']
-        db.session.add(team_row)
+        team_row = DataController.upsert_team(
+            team_setting['TeamName'],
+            discord_invite=team_setting['DiscordInvite'],
+            twitter_user=team_setting['TwitterUser'],
+            primary_color=team_setting['PrimaryColor'],
+            secondary_color=team_setting['SecondaryColor'],
+            max_difficulty=team_setting['maxDifficulty']
+        )
 
         # setting maker first
         maker_map = collections.defaultdict(Maker, {
