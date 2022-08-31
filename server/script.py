@@ -77,6 +77,33 @@ class DataController:
         db.session.add(level_row)
         return level_row
 
+    @classmethod
+    def upsert_difficulty(cls,
+                          level, team,
+                          /, *,
+                          difficulty=None, clears=None,
+                          likes=None, tags=None,
+                          submission_date=None, created_at=None):
+        difficulty_row = cls._lookup_difficulty(
+            level, team
+        ) or LevelDifficulty(level=level, team=team)
+
+        difficulty_row.difficulty = difficulty
+        difficulty_row.clears = clears
+        difficulty_row.likes = likes
+        difficulty_row.tags = tags
+        difficulty_row.submission_date = submission_date
+        difficulty_row.created_at = created_at
+
+        db.session.add(difficulty_row)
+        return difficulty_row
+
+    @classmethod
+    def _lookup_difficulty(cls, level: Level, team: Team):
+        for difficulty in level.difficulty_list:
+            if difficulty.team == team:
+                return difficulty
+
 
 @app_group.command('load-team')
 @click.argument('data_file')
@@ -152,16 +179,49 @@ class LoadNymmData:
 
         self.load()
 
+        db.session.commit()
+
+    @property
+    def year_day(self):
+        match self.year:
+            case 4:
+                return datetime.datetime(year=2020, month=6, day=29)
+
+    def week_day(self, week):
+        return self.year_day + datetime.timedelta(days=7 * week)
+
     def load(self):
         # save team table
-        team = DataController.upsert_team("nymm")
+        team = DataController.upsert_team(
+            "nymm",
+            max_difficulty=8
+        )
 
         for info in self.read_data():
+            # save maker
             maker = DataController.upsert_maker(
                 info['makerId'],
                 name=info['makerName']
             )
-            print(maker)
+
+            # save level
+            level = DataController.upsert_level(
+                info['levelCode'],
+                name=info['levelName'],
+                creator=maker
+            )
+
+            # save difficulty
+            tags = info['tags'].split(',')
+            tags.append(info['mainTheme'])
+            tags.append(info['subTheme'])
+
+            DataController.upsert_difficulty(
+                level, team,
+                difficulty=info['difficulty'],
+                tags=[tag.strip() for tag in tags],
+                created_at=self.week_day(int(info['batchNumber']) + 1)
+            )
 
     def read_data(self):
         with open(self.data_file, encoding="utf8") as f:
