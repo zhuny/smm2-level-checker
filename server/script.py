@@ -186,9 +186,17 @@ class LoadNymmData:
         match self.year:
             case 4:
                 return datetime.datetime(year=2020, month=6, day=29)
+            case 5 | 6:
+                return datetime.datetime(year=2021, month=8, day=16)
+            case 7:
+                return datetime.datetime(year=2022, month=9, day=10)
 
     def week_day(self, week):
         return self.year_day + datetime.timedelta(days=7 * week)
+
+    def is_year_match(self, info):
+        info_year = int(info.get("5YMMor6YMM", self.year))
+        return info_year == self.year
 
     def load(self):
         # save team table
@@ -198,6 +206,9 @@ class LoadNymmData:
         )
 
         for info in self.read_data():
+            if not self.is_year_match(info):
+                continue
+
             # save maker
             maker = DataController.upsert_maker(
                 info['makerId'],
@@ -215,6 +226,7 @@ class LoadNymmData:
             tags = info['tags'].split(',')
             tags.append(info['mainTheme'])
             tags.append(info['subTheme'])
+            tags.append(f'{self.year}ymm')
 
             DataController.upsert_difficulty(
                 level, team,
