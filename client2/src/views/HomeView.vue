@@ -1,18 +1,18 @@
 <template>
-  <HelloWorld />
+  <RandomPick />
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 // Components
-import HelloWorld from '../components/HelloWorld.vue';
+import RandomPick from "../components/RandomPick.vue";
 
 export default defineComponent({
-  name: 'HomeView',
+  name: "HomeView",
 
   components: {
-    HelloWorld,
+    RandomPick,
   },
 });
 </script>
