@@ -121,8 +121,23 @@ export default {
   },
   methods: {
     clearLevel() {
-      console.log("HI");
-    }
-  }
+      client
+        .request(
+          gql`
+            mutation postClearLevel($levelId: Base64Key) {
+              clearLevel(levelId: $levelId) {
+                clearInfo {
+                  clearAt
+                }
+              }
+            }
+          `,
+          { levelId: this.levelId }
+        )
+        .then(({ clearLevel: { clearInfo } }) => {
+          console.log(clearInfo);
+        });
+    },
+  },
 };
 </script>
