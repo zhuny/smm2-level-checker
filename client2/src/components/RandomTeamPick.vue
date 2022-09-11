@@ -10,6 +10,7 @@ v-card(
       density="compact"
     )
     v-range-slider(
+      v-if="selected"
       :max="rangeEnd"
       :min="rangeStart"
       v-model="rangeSlider"
