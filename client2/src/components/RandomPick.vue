@@ -108,7 +108,10 @@ export default {
           }
         )
         .then(({ randomLevel: { id: levelId } }) => {
-          console.log(levelId);
+          this.$router.push({
+            name: "LevelDetail",
+            params: { levelId },
+          });
         });
     },
   },
