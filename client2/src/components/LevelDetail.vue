@@ -17,8 +17,8 @@ v-container
       )
         v-alert-title(v-text="diff.teamName")
         v-rating(
-          model-value="3"
-          length="6"
+          :model-value="diff.difficulty"
+          :length="diff.maxDifficulty"
           density="compact"
           size="x-small"
         )
@@ -62,6 +62,7 @@ export default {
                       teamName
                       primaryColor
                       secondaryColor
+                      maxDifficulty
                     }
                   }
                 }
