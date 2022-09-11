@@ -1,6 +1,6 @@
 steps:
   - name: gcr.io/cloud-builders/npm
-    dir: 'client'
+    dir: 'client2'
     args:
       - install
   - name: gcr.io/cloud-builders/gsutil
