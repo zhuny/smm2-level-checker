@@ -1,5 +1,11 @@
 <template lang="pug">
 v-container
+  v-card
+    v-card-title(v-text="levelName")
+    v-card-subtitle
+      v-chip.bg-purple-darken-1.px-4.py-0(
+        v-text="levelCode"
+      )
 </template>
 
 <script>
@@ -11,6 +17,8 @@ export default {
   data() {
     return {
       levelId: this.$route.params.levelId,
+      levelName: "-",
+      levelCode: "-",
     };
   },
   created() {
@@ -45,8 +53,9 @@ export default {
         `,
         { levelId: this.levelId }
       )
-      .then((info) => {
-        console.log(info);
+      .then(({ level: { name, code } }) => {
+        this.levelName = name;
+        this.levelCode = code;
       });
   },
 };
