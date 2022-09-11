@@ -1,5 +1,7 @@
 <template lang="pug">
-v-card
+v-card(
+  :color="primaryColor"
+)
   v-card-title {{ teamName }}
 </template>
 
@@ -13,6 +15,10 @@ export default {
     teamName: {
       type: String,
       required: true,
+    },
+    primaryColor: {
+      type: String,
+      default: "#ffffff",
     },
   },
 };

@@ -2,6 +2,7 @@
 v-container
   RandomTeamPick.mt-4(
     :team-name="team.teamName"
+    :primary-color="team.primaryColor"
     v-for="team in teamList"
     key="team.id"
   )
