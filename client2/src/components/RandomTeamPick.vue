@@ -7,13 +7,25 @@ v-card(
     v-checkbox(
       v-model="selected"
       label="Contain this team"
+      density="compact"
     )
     v-range-slider(
       :max="rangeEnd"
       :min="rangeStart"
       v-model="rangeSlider"
       step="0.5"
+      density="compact"
     )
+      template(v-slot:prepend)
+        v-avatar(
+          v-text="insideRangeStart"
+          size="x-small"
+        )
+      template(v-slot:append)
+        v-avatar(
+          v-text="insideRangeEnd"
+          size="x-small"
+        )
 </template>
 
 <script>
