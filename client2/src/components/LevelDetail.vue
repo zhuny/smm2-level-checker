@@ -22,6 +22,18 @@ v-container
           density="compact"
           size="x-small"
         )
+    v-card-actions
+      v-btn.bg-purple-darken-1(
+        v-if="isClear"
+        block
+        v-text="clearText"
+        color="secondary"
+      )
+      v-btn.bg-purple-darken-1(
+        v-else
+        block
+        @click="clearLevel"
+      ) CLEAR
 </template>
 
 <script>
@@ -37,6 +49,8 @@ export default {
       levelCode: "-",
       creatorName: "-",
       difficultyList: [],
+      isClear: false,
+      clearAt: null,
     };
   },
   created() {
@@ -96,5 +110,19 @@ export default {
         }
       );
   },
+  computed: {
+    clearText() {
+      if (this.isClear) {
+        return `DONE - ${this.clearAt}`;
+      } else {
+        return "-";
+      }
+    },
+  },
+  methods: {
+    clearLevel() {
+      console.log("HI");
+    }
+  }
 };
 </script>
