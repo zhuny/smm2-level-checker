@@ -26,8 +26,9 @@ v-container
       v-btn.bg-purple-darken-1(
         v-if="isClear"
         block
-        v-text="clearText"
+        disabled
         color="secondary"
+        v-text="clearText"
       )
       v-btn.bg-purple-darken-1(
         v-else
@@ -91,6 +92,7 @@ export default {
           level: {
             name,
             code,
+            clearInfo,
             creator: { name: creatorName },
             difficultyList: { edges: difficultyList },
           },
@@ -107,6 +109,7 @@ export default {
               };
             }
           );
+          this.setClearInfo(clearInfo);
         }
       );
   },
@@ -135,8 +138,17 @@ export default {
           { levelId: this.levelId }
         )
         .then(({ clearLevel: { clearInfo } }) => {
-          console.log(clearInfo);
+          this.setClearInfo(clearInfo);
         });
+    },
+    setClearInfo(clearInfo) {
+      console.log(clearInfo);
+      if (clearInfo && clearInfo.clearAt) {
+        this.isClear = true;
+        this.clearAt = clearInfo.clearAt;
+      } else {
+        this.isClear = false;
+      }
     },
   },
 };
