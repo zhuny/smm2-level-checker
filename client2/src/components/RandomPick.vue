@@ -4,6 +4,7 @@ v-container
     :team-name="team.teamName"
     :primary-color="team.primaryColor"
     :selected="team.selected"
+    :range-end="team.maxDifficulty"
     v-for="team in teamList"
     key="team.id"
   )
