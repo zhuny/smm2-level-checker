@@ -99,6 +99,9 @@ class RandomLevelSchema(graphene.Mutation):
 
     @classmethod
     def _save_team_info(cls, team_info_list):
+        if current_user.is_anonymous:
+            return
+
         query = db.session.query(TeamSearchOption).filter(
             TeamSearchOption.user_id == current_user.user_id
         )
@@ -141,7 +144,11 @@ class RandomLevelSchema(graphene.Mutation):
         )
         random_level = query.filter(
             Level.code >= RandomLevelSchema._get_random_code()
-        ).first() or query.first()
+        ).order_by(
+            Level.code
+        ).first() or query.order_by(
+            Level.code
+        ).first()
 
         # 검색한 조건을 이후에 재사용하기 위해 저장한다.
         RandomLevelSchema._save_team_info(team_info_list)
