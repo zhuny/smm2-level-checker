@@ -7,6 +7,21 @@ v-container
         v-text="levelCode"
       )
       v-chip(v-text="creatorName")
+    v-card-text
+      v-alert.d-flex.align-center(
+        v-for="diff in difficultyList"
+        :key="diff.id"
+        border="start"
+        color="diff.secondaryColor"
+        :border-color="diff.primaryColor"
+      )
+        v-alert-title(v-text="diff.teamName")
+        v-rating(
+          model-value="3"
+          length="6"
+          density="compact"
+          size="x-small"
+        )
 </template>
 
 <script>
@@ -21,6 +36,7 @@ export default {
       levelName: "-",
       levelCode: "-",
       creatorName: "-",
+      difficultyList: [],
     };
   },
   created() {
@@ -61,11 +77,21 @@ export default {
             name,
             code,
             creator: { name: creatorName },
+            difficultyList: { edges: difficultyList },
           },
         }) => {
           this.levelName = name;
           this.levelCode = code;
           this.creatorName = creatorName;
+          this.difficultyList = difficultyList.map(
+            ({ node: { id, difficulty, team } }) => {
+              return {
+                id,
+                difficulty,
+                ...team,
+              };
+            }
+          );
         }
       );
   },
