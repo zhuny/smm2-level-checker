@@ -3,6 +3,10 @@ v-card(
   :color="primaryColor"
 )
   v-card-title {{ teamName }}
+  v-checkbox(
+    v-model="selected"
+    label="Contain this team"
+  )
 </template>
 
 <script>
@@ -19,6 +23,10 @@ export default {
     primaryColor: {
       type: String,
       default: "#ffffff",
+    },
+    selected: {
+      type: Boolean,
+      default: false,
     },
   },
 };
