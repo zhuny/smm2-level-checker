@@ -1,13 +1,19 @@
 <template lang="pug">
 v-container
-  RandomTeamPick.mt-4(
+  RandomTeamPick.my-2(
     :team-name="team.teamName"
     :primary-color="team.primaryColor"
-    :selected="team.selected"
+    v-model:selected="team.selected"
     :range-end="team.maxDifficulty"
     v-for="team in teamList"
     key="team.id"
   )
+  v-btn.my-2(
+    block
+    color="secondary"
+    @click="pickRandomLevel"
+    :disabled="!teamSelected"
+  ) Pick One!
 </template>
 
 <script>
@@ -21,6 +27,7 @@ export default {
   data() {
     return {
       teamList: [],
+      teamSelected: false,
     };
   },
   created() {
@@ -58,6 +65,21 @@ export default {
           };
         });
       });
+  },
+  watch: {
+    teamList: {
+      handler(teamList) {
+        this.teamSelected = teamList.some(({ selected }) => {
+          return selected;
+        });
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    pickRandomLevel() {
+      // do something
+    },
   },
 };
 </script>

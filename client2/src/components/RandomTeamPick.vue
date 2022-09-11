@@ -5,7 +5,7 @@ v-card(
   v-card-title {{ teamName }}
   v-card-text
     v-checkbox(
-      v-model="selected"
+      v-model="isSelected"
       label="Contain this team"
       density="compact"
     )
@@ -36,6 +36,7 @@ export default {
     return {
       insideRangeStart: this.selectedRangeStart,
       insideRangeEnd: this.selectedRangeEnd,
+      insideSelected: this.selected,
     };
   },
   props: {
@@ -68,7 +69,11 @@ export default {
       default: 1,
     },
   },
-  emits: ["update:selectedRangeStart", "update:selectedRangeEnd"],
+  emits: [
+    "update:selectedRangeStart",
+    "update:selectedRangeEnd",
+    "update:selected",
+  ],
   computed: {
     rangeSlider: {
       get() {
@@ -79,6 +84,15 @@ export default {
         this.insideRangeEnd = v[1];
         this.$emit("update:selectedRangeStart", v[0]);
         this.$emit("update:selectedRangeEnd", v[1]);
+      },
+    },
+    isSelected: {
+      get() {
+        return this.insideSelected;
+      },
+      set(v) {
+        this.insideSelected = v;
+        this.$emit("update:selected", v);
       },
     },
   },
