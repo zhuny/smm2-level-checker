@@ -5,6 +5,8 @@ v-container
     :primary-color="team.primaryColor"
     v-model:selected="team.selected"
     :range-end="team.maxDifficulty"
+    v-model:selected-range-start="team.rangeStart"
+    v-model:selected-range-end="team.rangeEnd"
     v-for="team in teamList"
     key="team.id"
   )
@@ -78,7 +80,36 @@ export default {
   },
   methods: {
     pickRandomLevel() {
-      // do something
+      if (!this.teamSelected) {
+        return;
+      }
+
+      client
+        .request(
+          gql`
+            mutation getRandomLevel($lvl: [DifficultyRangeInput]) {
+              randomLevel(teamInfoList: $lvl) {
+                id
+              }
+            }
+          `,
+          {
+            lvl: this.teamList
+              .filter((team) => {
+                return team.selected;
+              })
+              .map((team) => {
+                return {
+                  teamId: team.id,
+                  rangeStart: team.rangeStart,
+                  rangeEnd: team.rangeEnd,
+                };
+              }),
+          }
+        )
+        .then(({ randomLevel: { id: levelId } }) => {
+          console.log(levelId);
+        });
     },
   },
 };
