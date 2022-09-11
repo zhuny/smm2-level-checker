@@ -6,6 +6,7 @@ v-container
       v-chip.bg-purple-darken-1.px-4.py-0(
         v-text="levelCode"
       )
+      v-chip(v-text="creatorName")
 </template>
 
 <script>
@@ -19,6 +20,7 @@ export default {
       levelId: this.$route.params.levelId,
       levelName: "-",
       levelCode: "-",
+      creatorName: "-",
     };
   },
   created() {
@@ -53,10 +55,19 @@ export default {
         `,
         { levelId: this.levelId }
       )
-      .then(({ level: { name, code } }) => {
-        this.levelName = name;
-        this.levelCode = code;
-      });
+      .then(
+        ({
+          level: {
+            name,
+            code,
+            creator: { name: creatorName },
+          },
+        }) => {
+          this.levelName = name;
+          this.levelCode = code;
+          this.creatorName = creatorName;
+        }
+      );
   },
 };
 </script>
