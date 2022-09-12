@@ -5,13 +5,8 @@ handlers:
   # This configures Google App Engine to serve the files in the app's static
   # directory.
   # each path for static file and others are redirected
-- url: /css
-  static_dir: client2/dist/css
-  secure: always
-  redirect_http_response_code: 301
-
-- url: /js
-  static_dir: client2/dist/js
+- url: /assets
+  static_dir: client2/dist/assets
   secure: always
   redirect_http_response_code: 301
 
@@ -29,6 +24,7 @@ handlers:
   secure: always
   redirect_http_response_code: 301
 
+  # For any path callback for SPA
 - url: /.*
   static_files: client2/dist/index.html
   upload: client2/dist/index\.html
