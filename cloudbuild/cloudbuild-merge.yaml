@@ -15,7 +15,7 @@ steps:
     dir: 'client2'
     args:
       - run
-      - build
+      - dev
   - name: gcr.io/cloud-builders/gsutil
     args:
       - cp
