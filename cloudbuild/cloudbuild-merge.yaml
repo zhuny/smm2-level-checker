@@ -1,4 +1,7 @@
 steps:
+  - name: node
+    args:
+      - -v
   - name: gcr.io/cloud-builders/npm
     dir: 'client2'
     args:
