@@ -4,6 +4,10 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
 
+console.log(import.meta.url);
+console.log(new URL("./src", import.meta.url));
+console.log(fileURLToPath(new URL("./src", import.meta.url)));
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
