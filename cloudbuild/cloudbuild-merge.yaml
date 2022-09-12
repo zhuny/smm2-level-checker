@@ -2,7 +2,8 @@ steps:
   - name: node
     args:
       - -v
-  - name: gcr.io/cloud-builders/npm
+  - name: node
+    entrypoint: npm
     dir: 'client2'
     args:
       - install
@@ -11,11 +12,12 @@ steps:
       - cp
       - gs://${_SETTING_BUCKET}/${_SERVICE_NAME}/env-${_ENV}.env
       - ./client2/.env
-  - name: gcr.io/cloud-builders/npm
+  - name: node
+    entrypoint: npm
     dir: 'client2'
     args:
       - run
-      - dev
+      - build
   - name: gcr.io/cloud-builders/gsutil
     args:
       - cp
